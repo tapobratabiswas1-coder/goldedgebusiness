@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://goldedge.netlify.app/sitemap.xml
+Sitemap: https://goldedgebusiness.netlify.app/sitemap.xml
