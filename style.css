@@ -43,22 +43,30 @@
   --shadow-md: 0 18px 50px rgba(0, 0, 0, 0.5);
 }
 
-/* ---------- Reset ---------- */
+/* ---------- Global Reset & Fixes ---------- */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  scroll-padding-top: 100px; /* Fixed: Prevents header overlap when scrolling */
+  scroll-padding-top: 100px;
+}
+
+html, body {
+  /* This is the master fix for the white gap / horizontal scroll on mobile */
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important; 
 }
 
 body {
-  margin: 0;
-  padding-top: calc(84px + env(safe-area-inset-top, 0px)); /* Fixed: Added more padding to push content down safely */
+  padding-top: calc(84px + env(safe-area-inset-top, 0px));
   font-family: 'Poppins', 'Inter', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
@@ -68,9 +76,12 @@ body {
 }
 
 img,
-svg {
+svg,
+video,
+iframe {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 a {
@@ -92,6 +103,7 @@ ul {
   margin: 0;
 }
 
+/* ---------- Typography ---------- */
 h1,
 h2,
 h3,
@@ -121,7 +133,7 @@ p {
   color: var(--text-soft);
 }
 
-/* ---------- Layout ---------- */
+/* ---------- Layout & Sections ---------- */
 .container {
   width: 100%;
   max-width: var(--container);
@@ -233,7 +245,6 @@ p {
   left: 0;
   right: 0;
   z-index: 50;
-  /* প্যাডিং বাড়ানো হলো যাতে ব্রাউজারের যেকোনো ওভারলের নিচে ন্যাভবার থাকে */
   padding-top: max(24px, env(safe-area-inset-top, 0px));
   background: color-mix(in oklab, var(--bg) 85%, transparent);
   backdrop-filter: saturate(180%) blur(14px);
@@ -251,7 +262,6 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* ফিক্সড হাইটের বদলে মিন-হাইট দেওয়া হলো যাতে কন্টেন্ট জায়গা পায় */
   min-height: 72px;
   height: auto;
   gap: 1rem;
@@ -263,7 +273,6 @@ p {
   align-items: center;
   gap: .55rem;
   font-weight: 700;
-  /* লোগোকে স্পেসিফিকালি একটু নিচে নামানো হলো */
   margin-top: 8px;
   overflow: visible !important;
 }
@@ -283,7 +292,6 @@ p {
 .logo-text {
   font-size: 1.1rem;
   letter-spacing: -.01em;
-  /* লাইন হাইট বাড়ানো হলো যাতে ফন্টের মাথা কেটে না যায় */
   line-height: 1.6 !important; 
   display: inline-block;
   padding-top: 4px;
@@ -499,12 +507,10 @@ p {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
-
   50% {
     transform: translate(30px, -20px) scale(1.05);
   }
@@ -670,40 +676,40 @@ p {
 }
 
 /* ---------- About / Team ---------- */
-
 #about .grid-3 {
-  max-width: 900px; /* পুরো টিমের সেকশনটির চওড়া কমিয়ে দেয় */
-  margin: 0 auto;    /* এটিকে স্ক্রিনের মাঝখানে নিয়ে আসে */
-  width: 100%;       /* এটি নিশ্চিত করে যেন এটি মোবাইল ডিভাইসে কাজ করে */
+  max-width: 1000px; 
+  margin: 0 auto;    
+  width: 100%;       
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* তিনটি কলাম বজায় রাখে */
-  gap: 2rem;         /* কার্ডগুলোর মধ্যকার ফাক বজায় রাখে */
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 2rem;         
 }
 
 .team-card {
   text-align: center;
-  padding: 2.5rem;
+  padding: 2.5rem 1.5rem;
 }
 
 .team-card .avatar {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   margin: 0 auto 1rem;
   border-radius: 50%;
   background: var(--grad-gold);
   color: #1a1408;
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 1.6rem;
   font-weight: 800;
   box-shadow: var(--shadow-gold);
   overflow: hidden;
   position: relative;
   cursor: pointer;
+  border: 2px solid var(--gold);
 }
 
 .avatar-photo {
-  display: none;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -711,14 +717,12 @@ p {
   object-fit: cover;
   object-position: center top;
   border-radius: 50%;
-}
-
-.avatar-photo.has-photo {
-  display: block;
+  z-index: 2;
 }
 
 .avatar-initials {
   pointer-events: none;
+  z-index: 1;
 }
 
 .avatar-upload-hint {
@@ -733,6 +737,7 @@ p {
   opacity: 0;
   transition: opacity 0.2s;
   pointer-events: none;
+  z-index: 3;
 }
 
 .team-card .avatar:hover .avatar-upload-hint {
@@ -743,17 +748,17 @@ p {
   color: var(--gold);
   font-size: .9rem;
   font-weight: 600;
-  margin: .2rem 0 .8rem;
+  margin: .4rem 0 .8rem;
 }
 
 .team-card .addr {
-  font-size: .9rem;
+  font-size: .85rem;
   color: var(--text-soft);
   margin: 0;
 }
 
 .team-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
   box-shadow: var(--shadow-md);
   border-color: rgba(212, 175, 55, .4);
 }
@@ -1112,12 +1117,10 @@ p {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     box-shadow: 0 10px 28px rgba(212, 175, 55, .35);
   }
-
   50% {
     box-shadow: 0 10px 28px rgba(212, 175, 55, .7);
   }
@@ -1135,14 +1138,23 @@ p {
   transform: none;
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 980px) {
+/* =========================================
+   Responsive Design & Media Queries
+   ========================================= */
+
+@media (max-width: 992px) {
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .grid-3 {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Adjust About section for tablets */
+  #about .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 800px;
   }
 
   .contact-grid {
@@ -1158,16 +1170,23 @@ p {
   }
 }
 
-@media (max-width: 720px) {
-  .section {
-    padding: 4.5rem 0;
+@media (max-width: 768px) {
+  /* This ensures the About cards and other grids stack beautifully on mobile */
+  .grid-4,
+  .grid-3,
+  #about .grid-3 {
+    grid-template-columns: 1fr;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
 
   .hero {
     padding: 4.5rem 0 4rem;
   }
 
- .nav-links {
+  /* Fixed Navigation Menu for Mobile */
+  .nav-links {
     position: absolute;
     top: 100%;
     left: 0;
@@ -1179,7 +1198,6 @@ p {
     border-bottom: 1px solid var(--border);
     padding: .5rem 1.25rem 1.25rem;
     
-    /* Fixed: Sliding up issue replaced with smooth fade out */
     opacity: 0;
     visibility: hidden;
     transform: translateY(-15px);
@@ -1201,6 +1219,7 @@ p {
     padding: .9rem 0;
     border-bottom: 1px solid var(--border);
     font-size: 1rem;
+    display: block; /* Ensures the whole block is clickable */
   }
 
   .hamburger {
@@ -1209,11 +1228,6 @@ p {
 
   .hide-sm {
     display: none;
-  }
-
-  .grid-4,
-  .grid-3 {
-    grid-template-columns: 1fr;
   }
 
   .form-row {
@@ -1230,7 +1244,6 @@ p {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
